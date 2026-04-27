@@ -44,7 +44,7 @@
                 {{ __('Clarity for every dollar.') }}
             </p>
             <p class="mt-5 max-w-sm text-[0.9375rem] leading-relaxed text-slate-400">
-                {{ __('Budgetlify helps you see spending, budgets, and cash flow in one calm workspace—built for everyday money decisions.') }}
+                {{ __('Budgetlify helps you see spending, budgets, and cash flow in one calm workspace, built for everyday money decisions.') }}
             </p>
         </div>
 

@@ -19,20 +19,27 @@
             {{ __('Enter the email for your account and we’ll send reset instructions.') }}
         </p>
 
-        <form action="#" method="post" class="mt-9 space-y-6" onsubmit="return false">
+        @session('status')
+            <p class="mt-4 rounded-xl border border-accent/20 bg-accent/5 px-3.5 py-2.5 text-sm text-slate-800 dark:border-accent/15 dark:bg-accent/10 dark:text-slate-200" role="status">
+                {{ $value }}
+            </p>
+        @endsession
+
+        <form action="/forgot-password" method="post" class="mt-9 space-y-6">
             @csrf
 
             <div class="space-y-2">
-                <label for="forgot-email" class="{{ $labelClass }}">{{ __('Email') }}</label>
+                <label for="forgot-email" class="{{ $labelClass }}">Email</label>
                 <input
                     id="forgot-email"
                     name="email"
                     type="email"
+                    value="{{ old('email') }}"
                     autocomplete="email"
-                    required
                     placeholder="you@example.com"
                     class="{{ $inputClass }}"
                 />
+                <x-error name="email" />
             </div>
 
             <x-button type="submit" variant="primary" size="lg" class="w-full rounded-xl py-3 text-[0.9375rem] shadow-md shadow-brand/20">

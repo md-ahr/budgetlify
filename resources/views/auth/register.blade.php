@@ -19,11 +19,11 @@
             {{ __('Start tracking budgets and spending in minutes.') }}
         </p>
 
-        <form action="#" method="post" class="mt-9 space-y-6" onsubmit="return false">
+        <form action="/register" method="post" class="mt-9 space-y-6">
             @csrf
 
             <div class="space-y-2">
-                <label for="register-name" class="{{ $labelClass }}">{{ __('Name') }}</label>
+                <label for="register-name" class="{{ $labelClass }}">Name</label>
                 <input
                     id="register-name"
                     name="name"
@@ -33,10 +33,11 @@
                     placeholder="{{ __('Jamie Doe') }}"
                     class="{{ $inputClass }}"
                 />
+                <x-error name="name" />
             </div>
 
             <div class="space-y-2">
-                <label for="register-email" class="{{ $labelClass }}">{{ __('Email') }}</label>
+                <label for="register-email" class="{{ $labelClass }}">Email</label>
                 <input
                     id="register-email"
                     name="email"
@@ -46,12 +47,13 @@
                     placeholder="you@example.com"
                     class="{{ $inputClass }}"
                 />
+                <x-error name="email" />
             </div>
 
             <div class="space-y-2">
                 <div class="grid gap-6 sm:grid-cols-2">
                     <div class="space-y-2">
-                        <label for="register-password" class="{{ $labelClass }}">{{ __('Password') }}</label>
+                        <label for="register-password" class="{{ $labelClass }}">Password</label>
                         <input
                             id="register-password"
                             name="password"
@@ -73,10 +75,9 @@
                         />
                     </div>
                 </div>
-                <p class="text-xs text-slate-500 dark:text-slate-500">
-                    {{ __('Use at least 8 characters.') }}
-                </p>
+                <x-error name="password" />
             </div>
+
 
             <x-button type="submit" variant="primary" size="lg" class="mt-2 w-full rounded-xl py-3 text-[0.9375rem] shadow-md shadow-brand/20">
                 {{ __('Create account') }}

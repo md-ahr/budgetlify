@@ -1,6 +1,8 @@
 @php
     $settingsUrl = route('settings');
-    $profileUrl = $settingsUrl . '#settings-profile';
+    $profileUrl = $settingsUrl;
+
+    $user = \Illuminate\Support\Facades\Auth::user();
 @endphp
 
 <header
@@ -128,10 +130,10 @@
                 aria-label="{{ __('Account menu') }}"
                 aria-haspopup="menu"
             >
-                <span class="flex size-8 items-center justify-center rounded-lg bg-brand-muted text-xs font-semibold text-brand dark:bg-brand/20">JD</span>
+                <span class="flex size-8 items-center justify-center rounded-lg bg-brand-muted text-xs font-semibold text-brand dark:bg-brand/20 capitalize">{{ $user->name[0] }}</span>
                 <span class="hidden min-w-0 sm:block">
-                    <span class="block truncate font-medium text-slate-900 dark:text-white">{{ __('Jamie Doe') }}</span>
-                    <span class="block truncate text-xs text-slate-500 dark:text-slate-400">{{ __('Pro plan') }}</span>
+                    <span class="block truncate font-medium text-slate-900 dark:text-white">{{ $user->name }}</span>
+                    <span class="block truncate text-xs text-slate-500 dark:text-slate-400">{{ $user->email }}</span>
                 </span>
                 <svg
                     class="ml-0.5 hidden size-4 shrink-0 text-slate-400 transition-transform group-open:rotate-180 sm:block dark:text-slate-500"
@@ -165,14 +167,16 @@
                     {{ __('Settings') }}
                 </a>
                 <div class="my-1 h-px bg-slate-100 dark:bg-white/10" role="separator"></div>
-                <a
-                    href="#"
-                    class="block px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 focus:outline-none focus-visible:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40 dark:focus-visible:bg-red-950/40"
-                    role="menuitem"
-                    onclick="event.preventDefault()"
-                >
-                    {{ __('Log out') }}
-                </a>
+                <form action="/logout" method="post">
+                    @csrf
+                    <button
+                        type="submit"
+                        class="block w-full text-left px-4 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 focus:outline-none focus-visible:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40 dark:focus-visible:bg-red-950/40"
+                        role="menuitem"
+                    >
+                        {{ __('Log out') }}
+                    </button>
+                </form>
             </div>
         </details>
     </div>
