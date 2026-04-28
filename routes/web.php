@@ -30,8 +30,11 @@ Route::patch('/transactions/{transaction}', [TransactionController::class, 'upda
 Route::delete('/transactions/{transaction}', [TransactionController::class, 'destroy'])->name('transactions.destroy')->middleware('auth');
 
 Route::get('/budgets', [BudgetController::class, 'index'])->name('budgets')->middleware('auth');
+Route::post('/budgets', [BudgetController::class, 'store'])->name('budgets.store')->middleware('auth');
+Route::patch('/budgets/{budget}', [BudgetController::class, 'update'])->name('budgets.update')->middleware('auth');
+Route::delete('/budgets/{budget}', [BudgetController::class, 'destroy'])->name('budgets.destroy')->middleware('auth');
 
 Route::post('/logout', [SessionController::class, 'destroy'])->name('logout')->middleware('auth');
 
-Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
-Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics')->middleware('auth');
+Route::get('/settings', [SettingsController::class, 'index'])->name('settings')->middleware('auth');

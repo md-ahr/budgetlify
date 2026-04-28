@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Support\FinanceCategories;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class TransactionController extends Controller
@@ -14,11 +16,6 @@ class TransactionController extends Controller
      * @var list<int>
      */
     private const ALLOWED_PER_PAGE = [10, 25, 50, 100];
-
-    /**
-     * @var list<string>
-     */
-    private const TRANSACTION_CATEGORIES = ['Bills', 'Dining', 'Groceries', 'Income', 'Salary', 'Shopping', 'Transport'];
 
     /**
      * @var list<string>
@@ -34,7 +31,7 @@ class TransactionController extends Controller
 
         $search = trim((string) $request->input('search', ''));
         $category = (string) $request->input('category', '');
-        if ($category !== '' && ! in_array($category, self::TRANSACTION_CATEGORIES, true)) {
+        if ($category !== '' && ! in_array($category, FinanceCategories::ALL, true)) {
             $category = '';
         }
 
@@ -64,7 +61,7 @@ class TransactionController extends Controller
                 'category' => $category,
                 'date_range' => $dateRange,
             ],
-            'categories' => self::TRANSACTION_CATEGORIES,
+            'categories' => FinanceCategories::ALL,
             'hasActiveFilters' => $hasActiveFilters,
         ]);
     }
@@ -107,7 +104,7 @@ class TransactionController extends Controller
             'title' => ['required'],
             'amount' => ['required'],
             'type' => ['required'],
-            'category' => ['required'],
+            'category' => ['required', Rule::in(FinanceCategories::ALL)],
             'occurred_on' => ['required'],
             'notes' => ['nullable'],
         ];

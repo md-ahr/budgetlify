@@ -2,15 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\Transaction;
+use App\Models\Budget;
 use App\Models\User;
 use App\Support\FinanceCategories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Transaction>
+ * @extends Factory<Budget>
  */
-class TransactionFactory extends Factory
+class BudgetFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -21,12 +21,9 @@ class TransactionFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'title' => fake()->words(3, true),
-            'amount' => (string) fake()->randomFloat(2, 1, 500),
-            'type' => fake()->randomElement(['income', 'expense']),
+            'name' => fake()->words(2, true),
             'category' => fake()->randomElement(FinanceCategories::ALL),
-            'occurred_on' => fake()->date('Y-m-d'),
-            'notes' => fake()->optional()->sentence(),
+            'monthly_limit' => (string) fake()->randomFloat(2, 100, 2000),
         ];
     }
 }

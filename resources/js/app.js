@@ -120,6 +120,101 @@ function resetTransactionFormForCreate(dialog) {
  * @param {HTMLDialogElement} dialog
  * @param {Record<string, string | number | null | undefined>} tx
  */
+/**
+ * @param {HTMLDialogElement} dialog
+ */
+function resetBudgetFormForCreate(dialog) {
+    const form = dialog.querySelector('#create-budget-form');
+    if (!(form instanceof HTMLFormElement)) {
+        return;
+    }
+    const storeUrl = dialog.dataset.storeUrl;
+    if (storeUrl) {
+        form.action = storeUrl;
+    }
+    const methodEl = dialog.querySelector('#budget-form-method');
+    if (methodEl instanceof HTMLInputElement) {
+        methodEl.disabled = true;
+    }
+    const editingEl = dialog.querySelector('#budget-editing-id');
+    if (editingEl instanceof HTMLInputElement) {
+        editingEl.disabled = true;
+        editingEl.value = '';
+    }
+    const nameInput = form.querySelector('#budget-name');
+    if (nameInput instanceof HTMLInputElement) {
+        nameInput.value = '';
+    }
+    const limitInput = form.querySelector('#budget-limit');
+    if (limitInput instanceof HTMLInputElement) {
+        limitInput.value = '';
+    }
+    const category = form.querySelector('#budget-category');
+    if (category instanceof HTMLSelectElement) {
+        category.selectedIndex = 0;
+    }
+    const heading = dialog.querySelector('#budget-modal-heading');
+    if (heading) {
+        heading.textContent = dialog.dataset.textAddTitle ?? '';
+    }
+    const subtitle = dialog.querySelector('#budget-modal-subtitle');
+    if (subtitle) {
+        subtitle.textContent = dialog.dataset.textAddSubtitle ?? '';
+    }
+    const submitLbl = dialog.querySelector('#budget-submit-label');
+    if (submitLbl) {
+        submitLbl.textContent = dialog.dataset.textSave ?? '';
+    }
+}
+
+/**
+ * @param {HTMLDialogElement} dialog
+ * @param {Record<string, string | number | null | undefined>} row
+ */
+function configureBudgetFormForEdit(dialog, row) {
+    const form = dialog.querySelector('#create-budget-form');
+    if (!(form instanceof HTMLFormElement)) {
+        return;
+    }
+    const base = dialog.dataset.budgetsBase?.replace(/\/$/, '') ?? '';
+    if (base && row.id != null) {
+        form.action = `${base}/${row.id}`;
+    }
+    const methodEl = dialog.querySelector('#budget-form-method');
+    if (methodEl instanceof HTMLInputElement) {
+        methodEl.disabled = false;
+    }
+    const editingEl = dialog.querySelector('#budget-editing-id');
+    if (editingEl instanceof HTMLInputElement) {
+        editingEl.disabled = false;
+        editingEl.value = String(row.id);
+    }
+    const nameInput = form.querySelector('#budget-name');
+    if (nameInput instanceof HTMLInputElement) {
+        nameInput.value = row.name != null ? String(row.name) : '';
+    }
+    const limitInput = form.querySelector('#budget-limit');
+    if (limitInput instanceof HTMLInputElement) {
+        limitInput.value = row.monthly_limit != null ? String(row.monthly_limit) : '';
+    }
+    const category = form.querySelector('#budget-category');
+    if (category instanceof HTMLSelectElement && row.category != null) {
+        category.value = String(row.category);
+    }
+    const heading = dialog.querySelector('#budget-modal-heading');
+    if (heading) {
+        heading.textContent = dialog.dataset.textEditTitle ?? '';
+    }
+    const subtitle = dialog.querySelector('#budget-modal-subtitle');
+    if (subtitle) {
+        subtitle.textContent = dialog.dataset.textEditSubtitle ?? '';
+    }
+    const submitLbl = dialog.querySelector('#budget-submit-label');
+    if (submitLbl) {
+        submitLbl.textContent = dialog.dataset.textSaveChanges ?? '';
+    }
+}
+
 function configureTransactionFormForEdit(dialog, tx) {
     const form = dialog.querySelector('#create-transaction-form');
     if (!(form instanceof HTMLFormElement)) {
@@ -227,8 +322,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const openBudgetBtn = document.getElementById('open-create-budget');
 
     openBudgetBtn?.addEventListener('click', (e) => {
-        budgetDialog?.showModal();
+        if (budgetDialog instanceof HTMLDialogElement) {
+            resetBudgetFormForCreate(budgetDialog);
+            budgetDialog.showModal();
+        }
         e.stopPropagation();
+    });
+
+    document.querySelectorAll('[data-edit-budget]').forEach((el) => {
+        el.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const raw = el.getAttribute('data-edit-budget');
+            if (!raw || !(budgetDialog instanceof HTMLDialogElement)) {
+                return;
+            }
+            try {
+                const row = JSON.parse(raw);
+                configureBudgetFormForEdit(budgetDialog, row);
+                budgetDialog.showModal();
+            } catch {
+                /* ignore malformed payload */
+            }
+        });
     });
 
     document.querySelectorAll('[data-close-create-budget]').forEach((el) => {
@@ -286,6 +402,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (transactionDialog?.hasAttribute('data-open-with-errors')) {
         transactionDialog.showModal();
+    }
+
+    if (budgetDialog?.hasAttribute('data-open-with-errors')) {
+        budgetDialog.showModal();
     }
 
     document.querySelectorAll('[data-close-dialog]').forEach((btn) => {

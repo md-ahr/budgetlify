@@ -442,7 +442,7 @@ export function initBudgetlifyCharts() {
                             border: { display: false },
                         },
                         y: {
-                            beginAtZero: true,
+                            beginAtZero: false,
                             grid: { color: t.grid },
                             ticks: {
                                 color: t.text,
