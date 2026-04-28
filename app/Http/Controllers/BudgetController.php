@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Budget;
 use App\Models\Transaction;
 use App\Support\FinanceCategories;
+use App\Support\Money;
+use App\Support\UserDate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +37,7 @@ class BudgetController extends Controller
             'budgets' => $budgets,
             'spentForBudget' => $spentForBudget,
             'categories' => FinanceCategories::ALL,
-            'spentPeriodLabel' => $month->isoFormat('MMMM YYYY'),
+            'spentPeriodLabel' => UserDate::formatMonthYear($month),
         ]);
     }
 
@@ -82,7 +84,8 @@ class BudgetController extends Controller
             'monthly_limit' => __('Monthly limit'),
         ]);
 
-        $validated['monthly_limit'] = number_format((float) $validated['monthly_limit'], 2, '.', '');
+        $base = Money::toBaseAmount((float) $validated['monthly_limit']);
+        $validated['monthly_limit'] = number_format($base, 2, '.', '');
 
         return $validated;
     }

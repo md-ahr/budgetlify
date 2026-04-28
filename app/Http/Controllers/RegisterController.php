@@ -32,6 +32,6 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        return to_route('auth.login')->with('success', 'User registered successfully!');
+        return to_route('dashboard')->with('status', __('User registered successfully!'));
     }
 }

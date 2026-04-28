@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Support\FinanceCategories;
+use App\Support\Money;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -69,6 +70,7 @@ class TransactionController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate($this->transactionValidationRules());
+        $data['amount'] = number_format(Money::toBaseAmount((float) $data['amount']), 2, '.', '');
 
         Auth::user()->transactions()->create($data);
 
@@ -80,6 +82,7 @@ class TransactionController extends Controller
         abort_unless($transaction->user_id === Auth::id(), 403);
 
         $data = $request->validate($this->transactionValidationRules());
+        $data['amount'] = number_format(Money::toBaseAmount((float) $data['amount']), 2, '.', '');
 
         $transaction->update($data);
 

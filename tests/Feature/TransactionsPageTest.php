@@ -117,6 +117,23 @@ it('filters to the last year when date_range is month', function () {
     Carbon::setTestNow();
 });
 
+it('formats transaction dates using the user date format preference', function () {
+    $user = User::factory()->create(['date_format' => 'de_dot']);
+    Transaction::factory()->for($user)->create([
+        'title' => 'Cafe',
+        'category' => 'Dining',
+        'type' => 'expense',
+        'amount' => '5.00',
+        'occurred_on' => '2026-04-27',
+    ]);
+
+    actingAs($user);
+
+    get(route('transactions'))
+        ->assertOk()
+        ->assertSeeText('27.04.2026');
+});
+
 it('shows filtered empty state when no rows match', function () {
     $user = User::factory()->create();
     Transaction::factory()->for($user)->create([

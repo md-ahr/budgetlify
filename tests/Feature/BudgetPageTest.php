@@ -3,6 +3,7 @@
 use App\Models\Budget;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Support\Money;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -64,7 +65,32 @@ it('counts expense totals case-insensitively on type', function () {
 
     get(route('budgets'))
         ->assertOk()
-        ->assertSeeText('$800.00');
+        ->assertSeeText(Money::format(800.0, 2));
+
+    Carbon::setTestNow();
+});
+
+it('displays amounts in the user display currency', function () {
+    Carbon::setTestNow('2026-06-15 12:00:00');
+
+    $user = User::factory()->create(['currency' => 'EUR']);
+    Budget::factory()->for($user)->create([
+        'name' => 'Shop',
+        'category' => 'Shopping',
+        'monthly_limit' => '1000.00',
+    ]);
+    Transaction::factory()->for($user)->create([
+        'type' => 'expense',
+        'category' => 'Shopping',
+        'amount' => '50.00',
+        'occurred_on' => '2026-06-10',
+    ]);
+
+    actingAs($user);
+
+    get(route('budgets'))
+        ->assertOk()
+        ->assertSeeText(Money::format(50.0, 2));
 
     Carbon::setTestNow();
 });
@@ -89,7 +115,7 @@ it('matches spending when transaction category casing differs from the budget', 
 
     get(route('budgets'))
         ->assertOk()
-        ->assertSeeText('$50.00');
+        ->assertSeeText(Money::format(50.0, 2));
 
     Carbon::setTestNow();
 });
@@ -114,7 +140,7 @@ it('shows spent from expense transactions in the current month', function () {
 
     get(route('budgets'))
         ->assertOk()
-        ->assertSeeText('$40.50');
+        ->assertSeeText(Money::format(40.5, 2));
 
     Carbon::setTestNow();
 });

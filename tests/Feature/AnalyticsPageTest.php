@@ -2,6 +2,7 @@
 
 use App\Models\Transaction;
 use App\Models\User;
+use App\Support\Money;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -45,8 +46,8 @@ it('shows this month income and expense totals from transactions', function () {
 
     get(route('analytics'))
         ->assertOk()
-        ->assertSeeText('1,000.00')
-        ->assertSeeText('250.25');
+        ->assertSeeText(Money::format(1000.0, 2))
+        ->assertSeeText(Money::format(250.25, 2));
 
     Carbon::setTestNow();
 });

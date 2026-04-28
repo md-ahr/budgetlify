@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Services\ExchangeRateService;
 use App\Support\FinanceCategories;
+use App\Support\Money;
+use App\Support\UserDate;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -48,7 +51,7 @@ class AnalyticsController extends Controller
         $monthLabels = [];
         $monthlySpend = [];
         foreach ($monthKeys as $ym) {
-            $monthLabels[] = Carbon::parse($ym.'-01')->isoFormat('MMM YYYY');
+            $monthLabels[] = UserDate::formatMonthYear(Carbon::parse($ym.'-01'));
             $monthlySpend[] = round($expenseByMonth->get($ym, 0.0), 2);
         }
 
@@ -138,6 +141,17 @@ class AnalyticsController extends Controller
             ? 'bg-accent-muted text-accent-dark dark:bg-emerald-950/40 dark:text-emerald-300'
             : 'bg-amber-50 text-amber-900 dark:bg-amber-950/40 dark:text-amber-200';
 
+        $displayCurrency = Money::currencyCode();
+        $exchange = app(ExchangeRateService::class);
+        $toDisplay = fn (float $v): float => round($exchange->fromBaseTo($v, $displayCurrency), 2);
+        $mapSeries = fn (array $xs): array => array_map(fn ($v) => $toDisplay((float) $v), $xs);
+
+        $monthlySpend = $mapSeries($monthlySpend);
+        $monthlyTrend = $mapSeries($monthlyTrend);
+        $categoryChartValues = $mapSeries($categoryChartValues);
+        $flowValues = [$toDisplay($incomeThisMonth), $toDisplay($expenseThisMonth)];
+        $savingsCumulative = $mapSeries($savingsCumulative);
+
         return view('analytics.index', [
             'monthLabels' => $monthLabels,
             'monthlySpend' => $monthlySpend,
@@ -149,12 +163,12 @@ class AnalyticsController extends Controller
             'categoryGrandTotal' => $categoryGrandTotal,
             'analyticsRangeLabel' => __('Last :count months', ['count' => 6]),
             'flowLabels' => [__('Income'), __('Expenses')],
-            'flowValues' => [round($incomeThisMonth, 2), round($expenseThisMonth, 2)],
+            'flowValues' => $flowValues,
             'incomeThisMonth' => $incomeThisMonth,
             'expenseThisMonth' => $expenseThisMonth,
             'netThisMonth' => $netThisMonth,
             'expenseBarPct' => $expenseBarPct,
-            'flowPeriodLabel' => $now->isoFormat('MMMM YYYY'),
+            'flowPeriodLabel' => UserDate::formatMonthYear($now),
             'savingsLabels' => $savingsLabels,
             'savingsCumulative' => $savingsCumulative,
             'savingsBadgeLabel' => $savingsBadgeLabel,

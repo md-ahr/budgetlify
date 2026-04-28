@@ -94,6 +94,50 @@ class Transaction extends Model
     }
 
     /**
+     * @param  'income'|'expense'  $typeNormalized
+     */
+    public static function totalAmountForUserAllTime(int $userId, string $typeNormalized): float
+    {
+        $sumExpr = self::amountSumSqlExpression();
+        $value = self::query()
+            ->where('user_id', $userId)
+            ->whereRaw('LOWER(TRIM(type)) = ?', [$typeNormalized])
+            ->selectRaw("{$sumExpr} as total")
+            ->value('total');
+
+        return (float) ($value ?? 0);
+    }
+
+    /**
+     * Expense totals per calendar day (Y-m-d) for charting.
+     *
+     * @return Collection<string, float>
+     */
+    public static function expenseTotalsByDayForUser(int $userId, string $startDate, string $endDate): Collection
+    {
+        $sumExpr = self::amountSumSqlExpression();
+        $driver = self::query()->getConnection()->getDriverName();
+        $dateExpr = match ($driver) {
+            'sqlite' => 'date(occurred_on)',
+            'pgsql' => '(occurred_on::date)::text',
+            default => 'DATE(occurred_on)',
+        };
+
+        $rows = self::query()
+            ->where('user_id', $userId)
+            ->whereRaw('LOWER(TRIM(type)) = ?', ['expense'])
+            ->whereNotNull('occurred_on')
+            ->where('occurred_on', '>=', $startDate)
+            ->where('occurred_on', '<=', $endDate)
+            ->selectRaw("{$dateExpr} as d, {$sumExpr} as total")
+            ->groupByRaw($dateExpr)
+            ->orderBy('d')
+            ->get();
+
+        return $rows->mapWithKeys(fn ($row) => [(string) $row->d => (float) $row->total]);
+    }
+
+    /**
      * Normalized key for matching budget categories to {@see expenseTotalsByCategoryForUser()} totals.
      */
     public static function normalizedCategoryKeyForBudgetLookup(string $category): string

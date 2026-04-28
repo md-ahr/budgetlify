@@ -14,6 +14,14 @@
 <div class="flex min-h-screen w-full flex-col lg:pl-64">
     <x-layout.app-topbar />
     <main id="content" class="flex-1 p-4 sm:p-6 lg:p-8" tabindex="-1">
+        @if (session('status'))
+            <div
+                class="mb-6 rounded-xl border border-accent/20 bg-accent/5 px-3.5 py-2.5 text-sm text-slate-800 dark:border-accent/15 dark:bg-accent/10 dark:text-slate-200"
+                role="status"
+            >
+                {{ session('status') }}
+            </div>
+        @endif
         {{ $slot }}
     </main>
 </div>

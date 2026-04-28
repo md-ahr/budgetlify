@@ -157,13 +157,39 @@ function bindDashboardExpenseRangeListener() {
     });
 }
 
-function currencyTick(value) {
+function chartCurrencyMeta() {
+    const currency = document.body?.dataset?.userCurrency || 'USD';
+    const rawLocale = document.body?.dataset?.userLocale || 'en';
+
+    return { currency, locale: rawLocale };
+}
+
+/**
+ * @param {number} value
+ * @param {number} fractionDigits
+ */
+function formatChartCurrency(value, fractionDigits = 0) {
     const n = Number(value);
     if (Number.isNaN(n)) {
         return '';
     }
 
-    return '$' + n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    const { currency, locale } = chartCurrencyMeta();
+
+    try {
+        return new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency,
+            minimumFractionDigits: fractionDigits,
+            maximumFractionDigits: fractionDigits,
+        }).format(n);
+    } catch {
+        return n.toLocaleString(locale, { maximumFractionDigits: fractionDigits });
+    }
+}
+
+function currencyTick(value) {
+    return formatChartCurrency(value, 0);
 }
 
 function destroyCharts() {
@@ -230,10 +256,9 @@ export function initBudgetlifyCharts() {
                             callbacks: {
                                 label(ctx) {
                                     const v = ctx.parsed.y;
+                                    const formatted = formatChartCurrency(v, 2);
 
-                                    return datasetLabel
-                                        ? `${datasetLabel}: $${Number(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                                        : `$${Number(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                                    return datasetLabel ? `${datasetLabel}: ${formatted}` : formatted;
                                 },
                             },
                         },
@@ -315,7 +340,7 @@ export function initBudgetlifyCharts() {
                                 label(ctx) {
                                     const v = ctx.parsed.y;
 
-                                    return `${ctx.dataset.label}: $${Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+                                    return `${ctx.dataset.label}: ${formatChartCurrency(v, 0)}`;
                                 },
                             },
                         },
@@ -430,7 +455,7 @@ export function initBudgetlifyCharts() {
                                 label(ctx) {
                                     const v = ctx.parsed.y;
 
-                                    return `${datasetLabel}: $${Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+                                    return `${datasetLabel}: ${formatChartCurrency(v, 0)}`;
                                 },
                             },
                         },
@@ -492,7 +517,7 @@ export function initBudgetlifyCharts() {
                                     const raw = ctx.label === labels[0] ? incomeLabel : expenseLabel;
                                     const prefix = raw ? `${raw}: ` : '';
 
-                                    return `${prefix}$${Number(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                                    return `${prefix}${formatChartCurrency(v, 2)}`;
                                 },
                             },
                         },

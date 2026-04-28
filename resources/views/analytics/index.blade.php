@@ -76,7 +76,7 @@
                                 <p class="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">{{ __('Total') }}</p>
                                 <p class="text-lg font-semibold tabular-nums text-slate-900 dark:text-white">
                                     @if ($categoryGrandTotal >= 0.01)
-                                        ${{ number_format($categoryGrandTotal, 0) }}
+                                        {{ $money($categoryGrandTotal, 0) }}
                                     @else
                                         —
                                     @endif
@@ -112,14 +112,14 @@
                 <div class="mt-8 grid gap-6 sm:grid-cols-2">
                     <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-4 dark:border-white/[0.08] dark:bg-slate-800/50">
                         <p class="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">{{ __('Income') }}</p>
-                        <p class="mt-2 text-2xl font-semibold tabular-nums text-accent dark:text-emerald-400">${{ number_format($incomeThisMonth, 2) }}</p>
+                        <p class="mt-2 text-2xl font-semibold tabular-nums text-accent dark:text-emerald-400">{{ $money($incomeThisMonth) }}</p>
                         <div class="mt-4 h-2 overflow-hidden rounded-full bg-white dark:bg-slate-800">
                             <div class="h-full w-[100%] rounded-full bg-accent/80 dark:bg-accent/70" role="presentation"></div>
                         </div>
                     </div>
                     <div class="rounded-xl border border-slate-100 bg-slate-50/80 p-4 dark:border-white/[0.08] dark:bg-slate-800/50">
                         <p class="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">{{ __('Expenses') }}</p>
-                        <p class="mt-2 text-2xl font-semibold tabular-nums text-red-600 dark:text-red-400">${{ number_format($expenseThisMonth, 2) }}</p>
+                        <p class="mt-2 text-2xl font-semibold tabular-nums text-red-600 dark:text-red-400">{{ $money($expenseThisMonth) }}</p>
                         <div class="mt-4 h-2 overflow-hidden rounded-full bg-white dark:bg-slate-800">
                             <div
                                 class="h-full rounded-full bg-red-500/70 dark:bg-red-500/60"
@@ -144,9 +144,9 @@
                 <p class="mt-6 text-center text-sm font-medium text-slate-600 dark:text-slate-300">
                     {{ __('Net') }}:
                     @if ($netThisMonth >= 0)
-                        <span class="text-accent dark:text-emerald-400">+${{ number_format($netThisMonth, 2) }}</span>
+                        <span class="text-accent dark:text-emerald-400">+{{ $money($netThisMonth) }}</span>
                     @else
-                        <span class="text-red-600 dark:text-red-400">-${{ number_format(abs($netThisMonth), 2) }}</span>
+                        <span class="text-red-600 dark:text-red-400">-{{ $money(abs($netThisMonth)) }}</span>
                     @endif
                 </p>
             </section>

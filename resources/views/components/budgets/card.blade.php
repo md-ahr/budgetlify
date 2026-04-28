@@ -50,11 +50,11 @@
     <dl class="mt-6 grid grid-cols-2 gap-4 text-sm">
         <div>
             <dt class="font-medium text-slate-500 dark:text-slate-400">{{ __('Limit') }}</dt>
-            <dd class="mt-1 text-base font-semibold tabular-nums text-slate-900 dark:text-white">${{ number_format($limit, 2) }}</dd>
+            <dd class="mt-1 text-base font-semibold tabular-nums text-slate-900 dark:text-white">{{ $money($limit) }}</dd>
         </div>
         <div class="text-right">
             <dt class="font-medium text-slate-500 dark:text-slate-400">{{ __('Spent') }}</dt>
-            <dd class="mt-1 text-base font-semibold tabular-nums {{ $textClass }}">${{ number_format($spent, 2) }}</dd>
+            <dd class="mt-1 text-base font-semibold tabular-nums {{ $textClass }}">{{ $money($spent) }}</dd>
         </div>
     </dl>
 
@@ -72,7 +72,7 @@
     <div class="mt-6 flex items-center justify-end gap-1 border-t border-slate-100 pt-5 dark:border-white/10">
         <button
             type="button"
-            data-edit-budget="{{ json_encode($budget->only(['id', 'name', 'category', 'monthly_limit']), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) }}"
+            data-edit-budget="{{ json_encode(array_merge($budget->only(['id', 'name', 'category']), ['monthly_limit' => \App\Support\Money::toDisplayAmount((float) $budget->monthly_limit)]), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) }}"
             class="inline-flex size-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:ring-offset-slate-900"
             aria-label="{{ __('Edit budget') }}"
         >

@@ -38,3 +38,6 @@ Route::post('/logout', [SessionController::class, 'destroy'])->name('logout')->m
 
 Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics')->middleware('auth');
 Route::get('/settings', [SettingsController::class, 'index'])->name('settings')->middleware('auth');
+Route::patch('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.profile.update')->middleware('auth');
+Route::patch('/settings/preferences', [SettingsController::class, 'updatePreferences'])->name('settings.preferences.update')->middleware('auth');
+Route::delete('/settings/account', [SettingsController::class, 'destroyAccount'])->name('settings.account.destroy')->middleware('auth');

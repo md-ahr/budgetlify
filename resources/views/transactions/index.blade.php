@@ -107,7 +107,7 @@
                         @forelse ($transactions as $row)
                             <tr class="transition-colors hover:bg-slate-50/80 dark:hover:bg-white/4">
                                 <td class="whitespace-nowrap px-4 py-4 tabular-nums text-slate-600 sm:px-6 dark:text-slate-400">
-                                    {{ \Carbon\Carbon::parse($row->occurred_on)->format('M j, Y') }}
+                                    {{ $formatUserDate($row->occurred_on) }}
                                 </td>
                                 <td class="px-4 py-4 font-medium text-slate-900 sm:px-6 dark:text-white">
                                     {{ $row->title }}
@@ -116,7 +116,7 @@
                                     {{ $row->category }}
                                 </td>
                                 <td class="whitespace-nowrap px-4 py-4 text-right font-semibold tabular-nums sm:px-6 {{ $row->type === 'income' ? 'text-accent dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
-                                    {{ $row->type === 'income' ? '+' : '-' }}${{ number_format((float) $row->amount, 2) }}
+                                    {{ $row->type === 'income' ? '+' : '-' }}{{ $money((float) $row->amount) }}
                                 </td>
                                 <td class="px-4 py-4 sm:px-6">
                                     @if ($row->type === 'income')
@@ -132,7 +132,7 @@
                                     <div class="flex items-center gap-1">
                                         <button
                                             type="button"
-                                            data-edit-transaction="{{ json_encode($row->only(['id', 'title', 'amount', 'type', 'category', 'occurred_on', 'notes']), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) }}"
+                                            data-edit-transaction="{{ json_encode(array_merge($row->only(['id', 'title', 'type', 'category', 'occurred_on', 'notes']), ['amount' => \App\Support\Money::toDisplayAmount((float) $row->amount)]), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) }}"
                                             class="inline-flex size-9 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:ring-offset-slate-900"
                                             aria-label="{{ __('Edit transaction') }}"
                                         >

@@ -66,7 +66,7 @@
         <div>
             <label for="budget-limit" class="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">{{ __('Monthly limit') }}</label>
             <div class="relative">
-                <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400" aria-hidden="true">$</span>
+                <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400 tabular-nums" aria-hidden="true">{{ \App\Support\Money::amountFieldPrefix() }}</span>
                 <input
                     id="budget-limit"
                     name="monthly_limit"
