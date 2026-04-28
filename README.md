@@ -1,6 +1,6 @@
 # Budgetlify
 
-Personal finance workspace UI built with **Laravel** and **Tailwind CSS**. The app focuses on dashboards, transactions, budgets, and analytics with a minimal fintech-style interface, light/dark theme, and demo data (no production auth or persistence wired yet).
+Personal finance workspace built with **Laravel** and **Tailwind CSS**. It provides dashboards, transactions, budgets, and analytics with a minimal fintech-style interface, light/dark theme, and per-user data backed by the database.
 
 ## Stack
 
@@ -12,12 +12,12 @@ Personal finance workspace UI built with **Laravel** and **Tailwind CSS**. The a
 
 ## Features
 
-- **Dashboard** — stat cards, expense overview chart with range filter (demo series), recent transactions
-- **Transactions** — filters, table, pagination UI (demo)
-- **Budgets** — budget cards and create flow (demo)
-- **Analytics** — charts for monthly trends, categories, savings, cash flow
-- **Settings** — profile, currency, appearance (theme), notifications (demo)
-- **Auth screens** — split-layout login, register, and forgot-password (UI only; forms are placeholders)
+- **Dashboard** — stat cards from your transactions, expense overview charts (7d / 30d / 90d), recent activity
+- **Transactions** — list with filters, create, edit, delete (scoped to the signed-in user)
+- **Budgets** — budgets per category with limits; full CRUD
+- **Analytics** — monthly trends, categories, savings, cash flow
+- **Settings** — profile and email, regional formats (currency, date format), appearance (theme), **delete account** (removes the user and cascades related records)
+- **Authentication** — register, login, logout, forgot / reset password (session guard); registration signs you in and redirects to the dashboard with a flash message
 - **Theme** — persisted light/dark preference (`localStorage` key `budgetlify-theme`)
 
 ## Requirements
@@ -73,9 +73,9 @@ php artisan test --compact
 
 ## Project notes
 
-- **Auth routes** (`/login`, `/register`, `/forgot-password`) render Blade only; connect to [Laravel authentication](https://laravel.com/docs/authentication) when you are ready.
-- **Demo content** lives in controllers and Blade (`@php` blocks) where noted; replace with Eloquent models and policies as you grow the product.
-- **Charts** live in `resources/js/charts.js` and reinitialize on theme change.
+- **Route names** — the login route is `login` (e.g. `route('login')`), not `auth.login`. Blade views under `resources/views/auth/` use the `auth.*` naming for files only.
+- **Flash messages** — many flows use the `status` session key; authenticated layouts show it in the main content area.
+- **Charts** — live in `resources/js/charts.js` and reinitialize on theme change.
 
 ## License
 
