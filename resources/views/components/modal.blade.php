@@ -1,16 +1,18 @@
 @props([
     'id',
     'labelledby' => null,
+    'persistWithErrors' => false,
 ])
 
 <dialog
     id="{{ $id }}"
     data-app-modal
+    @if ($persistWithErrors) data-open-with-errors data-prevent-light-dismiss @endif
     @if ($labelledby) aria-labelledby="{{ $labelledby }}" @endif
     aria-modal="true"
-    {{ $attributes->class(
-        'relative m-auto max-h-[90vh] w-[calc(100%-1.5rem)] max-w-lg overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-0 shadow-2xl shadow-slate-900/25 backdrop:bg-slate-900/60 backdrop:backdrop-blur-[2px] open:backdrop:bg-slate-900/60 dark:border-white/[0.1] dark:bg-slate-900 dark:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.55)]'
-    ) }}
+    {{ $attributes->merge([
+        'class' => 'relative m-auto max-h-[90vh] w-[calc(100%-1.5rem)] max-w-lg overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-0 shadow-2xl shadow-slate-900/25 backdrop:bg-slate-900/60 backdrop:backdrop-blur-[2px] open:backdrop:bg-slate-900/60 dark:border-white/[0.1] dark:bg-slate-900 dark:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.55)]',
+    ]) }}
 >
     <div class="absolute right-1.5 top-1.5 z-20 sm:right-2.5 sm:top-2.5">
         <button

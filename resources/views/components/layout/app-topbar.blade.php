@@ -3,6 +3,8 @@
     $profileUrl = $settingsUrl;
 
     $user = \Illuminate\Support\Facades\Auth::user();
+
+    $routeName = Route::currentRouteName();
 @endphp
 
 <header
@@ -19,8 +21,8 @@
     </label>
 
     <div class="hidden min-w-0 flex-1 sm:block">
-        <p class="truncate text-sm font-medium text-slate-500 dark:text-slate-400">{{ __('Overview') }}</p>
-        <h1 class="truncate text-lg font-semibold tracking-tight text-slate-900 dark:text-white">{{ __('Dashboard') }}</h1>
+        <p class="truncate text-sm font-medium text-slate-500 dark:text-slate-400 capitalize">{{ $routeName }}</p>
+        <h1 class="truncate text-lg font-semibold tracking-tight text-slate-900 dark:text-white">Admin Panel</h1>
     </div>
 
     <div class="flex min-w-0 flex-1 items-center justify-end gap-2 sm:flex-initial sm:gap-3">
@@ -130,7 +132,7 @@
                 aria-label="{{ __('Account menu') }}"
                 aria-haspopup="menu"
             >
-                <span class="flex size-8 items-center justify-center rounded-lg bg-brand-muted text-xs font-semibold text-brand dark:bg-brand/20 capitalize">{{ $user->name[0] }}</span>
+                <span class="flex size-8 items-center justify-center rounded-lg bg-brand-muted text-xs font-semibold text-brand dark:bg-brand/20 uppercase">{{ $user->name[0] }} {{ $user->name[1] }}</span>
                 <span class="hidden min-w-0 sm:block">
                     <span class="block truncate font-medium text-slate-900 dark:text-white">{{ $user->name }}</span>
                     <span class="block truncate text-xs text-slate-500 dark:text-slate-400">{{ $user->email }}</span>
